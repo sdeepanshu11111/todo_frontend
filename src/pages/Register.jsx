@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
 export default function Register() {
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
 
@@ -29,8 +29,8 @@ export default function Register() {
       >
         <h2 className="text-xl font-semibold mb-4">Register</h2>
         <input
-          name="name"
-          placeholder="Name"
+          name="username"
+          placeholder="username"
           onChange={handle}
           className="w-full p-2 border mb-3 rounded"
         />
