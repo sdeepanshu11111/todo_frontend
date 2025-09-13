@@ -6,7 +6,7 @@ import Nav from "./components/Nav";
 
 export default function App() {
   return (
-    <div>
+    <div className="min-h-screen">
       <Nav />
       <Routes>
         <Route path="/" element={<Navigate to="/todos" replace />} />

@@ -59,95 +59,79 @@ export default function Login() {
     }
   };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-white/20">
-          <div className="text-center mb-8">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
-              <LogIn className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              Welcome Back
+        <div className="glass rounded-2xl p-6 sm:p-8 fade-in pulse-glow">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="text-4xl sm:text-5xl lg:text-6xl mb-3 sm:mb-4 floating">🔐</div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+              Welcome Back!
             </h2>
-            <p className="text-gray-600">Sign in to your account</p>
+            <p className="text-white/80 text-sm sm:text-base">Sign in to your fancy todo account</p>
           </div>
 
-          <form onSubmit={submit} className="space-y-6">
+          <form onSubmit={submit} className="space-y-4 sm:space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  placeholder="Enter your email"
-                  onChange={handle}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                    errors.email ? "border-red-500" : "border-gray-300"
-                  }`}
-                  disabled={loading}
-                />
-              </div>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                placeholder="📧 Email Address"
+                onChange={handle}
+                className={`w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-200 text-sm sm:text-base ${
+                  errors.email ? "border-red-500/50" : ""
+                }`}
+                disabled={loading}
+              />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                <p className="mt-1 text-sm text-red-200">{errors.email}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={form.password}
-                  placeholder="Enter your password"
+                  placeholder="🔒 Password"
                   onChange={handle}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                    errors.password ? "border-red-500" : "border-gray-300"
+                  className={`w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 pr-12 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-200 text-sm sm:text-base ${
+                    errors.password ? "border-red-500/50" : ""
                   }`}
                   disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white/80 transition-colors duration-200"
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
+                  {showPassword ? "🙈" : "👁️"}
                 </button>
               </div>
               {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                <p className="mt-1 text-sm text-red-200">{errors.password}</p>
               )}
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
             >
               {loading ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                <div className="animate-spin text-xl sm:text-2xl">✨</div>
               ) : (
-                "Sign In"
+                <>🚀 <span className="ml-2">Sign In</span></>
               )}
             </button>
 
             {msg && (
               <div
-                className={`p-3 rounded-lg text-sm ${
+                className={`p-3 rounded-xl text-center font-medium ${
                   msg.includes("failed") || msg.includes("error")
-                    ? "bg-red-50 text-red-700 border border-red-200"
-                    : "bg-green-50 text-green-700 border border-green-200"
+                    ? "bg-red-500/20 text-red-200 border border-red-500/30"
+                    : "bg-green-500/20 text-green-200 border border-green-500/30"
                 }`}
               >
                 {msg}
@@ -155,14 +139,14 @@ export default function Login() {
             )}
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
+          <div className="mt-4 sm:mt-6 text-center">
+            <p className="text-white/80 text-sm sm:text-base">
               Don't have an account?{" "}
               <Link
                 to="/register"
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="text-white font-medium hover:text-white/90 transition-colors duration-200 hover:underline"
               >
-                Sign up
+                Sign up here! 👉
               </Link>
             </p>
           </div>
