@@ -18,8 +18,8 @@ export default function Register() {
     setLoading(true);
     try {
       await api.post("/auth/register", form);
-      setMsg("✅ Registered successfully! Redirecting to login...");
-      setTimeout(() => navigate("/login"), 1500);
+      setMsg("✅ Registered successfully! Redirecting to dashboard...");
+      setTimeout(() => navigate("/todos"), 1000);
     } catch (err) {
       setMsg(err.response?.data?.message || "❌ Registration failed");
     } finally {

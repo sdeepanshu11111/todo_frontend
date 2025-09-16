@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react";
 import api from "../api/axios";
 import DOMPurify from "dompurify";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -144,6 +145,8 @@ export default function Login() {
               </div>
             )}
           </form>
+
+          <GoogleLoginButton />
 
           <div className="mt-4 sm:mt-6 text-center">
             <p className="text-white/80 text-sm sm:text-base">
