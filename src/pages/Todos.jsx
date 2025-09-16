@@ -1,62 +1,36 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTodos, addTodo, updateTodo, deleteTodo } from "../store/todoSlice";
 
 export default function Todos() {
-  const [todos, setTodos] = useState([]);
   const [text, setText] = useState("");
-  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const navigate = useNavigate();
-
-  const fetchTodos = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get("/todos");
-      setTodos(res.data);
-    } catch (err) {
-      if (err.response?.status === 401) navigate("/login");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const dispatch = useDispatch();
+  const { items: todos, isLoading } = useSelector((state) => state.todos);
 
   useEffect(() => {
-    fetchTodos();
-  }, []);
+    dispatch(fetchTodos());
+  }, [dispatch]);
 
   const add = async (e) => {
     e.preventDefault();
     if (!text.trim()) return;
-    try {
-      await api.post("/todos", { title: text });
-      setText("");
-      fetchTodos();
-    } catch (err) {
-      console.error(err);
-    }
+    await dispatch(addTodo({ title: text }));
+    setText("");
   };
 
   const toggle = async (todo) => {
-    try {
-      await api.put(`/todos/${todo._id}`, {
-        completed: !todo.completed,
-        title: todo.title,
-      });
-      fetchTodos();
-    } catch (err) {
-      console.error(err);
-    }
+    await dispatch(updateTodo({
+      id: todo._id,
+      completed: !todo.completed,
+      title: todo.title,
+    }));
   };
 
   const remove = async (id) => {
-    try {
-      await api.delete(`/todos/${id}`);
-      fetchTodos();
-    } catch (err) {
-      console.error(err);
-    }
+    await dispatch(deleteTodo(id));
   };
 
   const filteredTodos = todos.filter(todo => {
@@ -68,7 +42,7 @@ export default function Todos() {
   const completedCount = todos.filter(t => t.completed).length;
   const totalCount = todos.length;
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="glass rounded-2xl p-8 bounce-in">
@@ -216,20 +190,6 @@ export default function Todos() {
                 <div className="text-lg sm:text-xl">⏳</div>
                 <div>{totalCount - completedCount} left</div>
               </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Quick Actions - Mobile Only */}
-        {todos.length > 0 && (
-          <div className="fixed bottom-4 right-4 sm:hidden">
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="glass w-12 h-12 rounded-full flex items-center justify-center text-white hover:scale-110 transition-all duration-200"
-              >
-                ⬆️
-              </button>
             </div>
           </div>
         )}

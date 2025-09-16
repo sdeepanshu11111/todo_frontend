@@ -1,19 +1,18 @@
 import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import { useDispatch } from "react-redux";
+import { googleLogin } from "../store/authSlice";
 
 export default function GoogleLoginButton() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSuccess = async (credentialResponse) => {
     try {
-      const idToken = credentialResponse.credential;
-
-      // Send ID token to backend for verification
-      await api.post("/auth/google", { idToken });
-      
-      // Cookie is set automatically by backend
-      navigate("/todos");
+      const result = await dispatch(googleLogin(credentialResponse.credential));
+      if (result.type === 'auth/googleLogin/fulfilled') {
+        navigate("/todos");
+      }
     } catch (err) {
       console.error("Google login failed", err);
     }

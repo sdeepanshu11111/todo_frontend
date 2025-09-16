@@ -1,17 +1,22 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import api from "../api/axios";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getCurrentUser, logoutUser } from "../store/authSlice";
 
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (!user) {
+      dispatch(getCurrentUser());
+    }
+  }, [dispatch, user]);
 
   const logout = async () => {
-    try {
-      await api.post("/auth/logout");
-    } catch (err) {
-      console.error(err);
-    }
+    await dispatch(logoutUser());
     navigate("/login");
     setIsOpen(false);
   };
@@ -33,30 +38,56 @@ export default function Nav() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
-            <Link 
-              to="/todos" 
-              className="text-white/90 hover:text-white transition-all duration-200 font-medium hover:scale-105 px-3 py-2 rounded-lg hover:bg-white/10"
-            >
-              📝 <span className="hidden lg:inline">Todos</span>
-            </Link>
-            <Link 
-              to="/login" 
-              className="text-white/90 hover:text-white transition-all duration-200 font-medium hover:scale-105 px-3 py-2 rounded-lg hover:bg-white/10"
-            >
-              🔐 <span className="hidden lg:inline">Login</span>
-            </Link>
-            <Link 
-              to="/register" 
-              className="text-white/90 hover:text-white transition-all duration-200 font-medium hover:scale-105 px-3 py-2 rounded-lg hover:bg-white/10"
-            >
-              👤 <span className="hidden lg:inline">Register</span>
-            </Link>
-            <button 
-              onClick={logout} 
-              className="bg-red-500/20 hover:bg-red-500/30 text-red-200 hover:text-white px-3 lg:px-4 py-2 rounded-full transition-all duration-200 font-medium hover:scale-105"
-            >
-              🚪 <span className="hidden lg:inline">Logout</span>
-            </button>
+            {user ? (
+              <>
+                <Link 
+                  to="/todos" 
+                  className="text-white/90 hover:text-white transition-all duration-200 font-medium hover:scale-105 px-3 py-2 rounded-lg hover:bg-white/10"
+                >
+                  📝 <span className="hidden lg:inline">Todos</span>
+                </Link>
+                
+                <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-3 py-2 rounded-full">
+                  {user.avatar ? (
+                    <img 
+                      src={user.avatar} 
+                      alt={user.name || user.email}
+                      className="w-8 h-8 rounded-full border-2 border-white/20"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div className="hidden lg:block">
+                    <p className="text-sm font-medium text-white">{user.name || 'User'}</p>
+                    <p className="text-xs text-white/70">{user.email}</p>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={logout} 
+                  className="bg-red-500/20 hover:bg-red-500/30 text-red-200 hover:text-white px-3 lg:px-4 py-2 rounded-full transition-all duration-200 font-medium hover:scale-105"
+                >
+                  🚪 <span className="hidden lg:inline">Logout</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link 
+                  to="/login" 
+                  className="text-white/90 hover:text-white transition-all duration-200 font-medium hover:scale-105 px-3 py-2 rounded-lg hover:bg-white/10"
+                >
+                  🔐 <span className="hidden lg:inline">Login</span>
+                </Link>
+                <Link 
+                  to="/register" 
+                  className="text-white/90 hover:text-white transition-all duration-200 font-medium hover:scale-105 px-3 py-2 rounded-lg hover:bg-white/10"
+                >
+                  👤 <span className="hidden lg:inline">Register</span>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -73,35 +104,60 @@ export default function Nav() {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`md:hidden transition-all duration-300 overflow-hidden ${isOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className={`md:hidden transition-all duration-300 overflow-hidden ${isOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="pt-4 pb-2 space-y-2">
-            <Link 
-              to="/todos" 
-              onClick={() => setIsOpen(false)}
-              className="block text-white/90 hover:text-white transition-all duration-200 font-medium px-4 py-3 rounded-lg hover:bg-white/10"
-            >
-              📝 Todos
-            </Link>
-            <Link 
-              to="/login" 
-              onClick={() => setIsOpen(false)}
-              className="block text-white/90 hover:text-white transition-all duration-200 font-medium px-4 py-3 rounded-lg hover:bg-white/10"
-            >
-              🔐 Login
-            </Link>
-            <Link 
-              to="/register" 
-              onClick={() => setIsOpen(false)}
-              className="block text-white/90 hover:text-white transition-all duration-200 font-medium px-4 py-3 rounded-lg hover:bg-white/10"
-            >
-              👤 Register
-            </Link>
-            <button 
-              onClick={logout} 
-              className="w-full text-left bg-red-500/20 hover:bg-red-500/30 text-red-200 hover:text-white px-4 py-3 rounded-lg transition-all duration-200 font-medium"
-            >
-              🚪 Logout
-            </button>
+            {user ? (
+              <>
+                <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-3 rounded-lg mb-3">
+                  {user.avatar ? (
+                    <img 
+                      src={user.avatar} 
+                      alt={user.name || user.email}
+                      className="w-10 h-10 rounded-full border-2 border-white/20"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+                      {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-white">{user.name || 'User'}</p>
+                    <p className="text-xs text-white/70">{user.email}</p>
+                  </div>
+                </div>
+                
+                <Link 
+                  to="/todos" 
+                  onClick={() => setIsOpen(false)}
+                  className="block text-white/90 hover:text-white transition-all duration-200 font-medium px-4 py-3 rounded-lg hover:bg-white/10"
+                >
+                  📝 Todos
+                </Link>
+                <button 
+                  onClick={logout} 
+                  className="w-full text-left bg-red-500/20 hover:bg-red-500/30 text-red-200 hover:text-white px-4 py-3 rounded-lg transition-all duration-200 font-medium"
+                >
+                  🚪 Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link 
+                  to="/login" 
+                  onClick={() => setIsOpen(false)}
+                  className="block text-white/90 hover:text-white transition-all duration-200 font-medium px-4 py-3 rounded-lg hover:bg-white/10"
+                >
+                  🔐 Login
+                </Link>
+                <Link 
+                  to="/register" 
+                  onClick={() => setIsOpen(false)}
+                  className="block text-white/90 hover:text-white transition-all duration-200 font-medium px-4 py-3 rounded-lg hover:bg-white/10"
+                >
+                  👤 Register
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

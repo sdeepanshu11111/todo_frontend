@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react";
-import api from "../api/axios";
+import { loginUser, clearError } from "../store/authSlice";
 import DOMPurify from "dompurify";
 import GoogleLoginButton from "../components/GoogleLoginButton";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const [msg, setMsg] = useState("");
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isLoading, error } = useSelector((state) => state.auth);
 
   const validateForm = () => {
     const newErrors = {};
@@ -44,21 +45,15 @@ export default function Login() {
 
   const submit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
-
-    setMsg("");
-    setLoading(true);
-
-    try {
-      await api.post("/auth/login", form); // cookie will be set automatically
-      navigate("/todos"); // after login, go to todos
-    } catch (err) {
-      setMsg(err.response?.data?.message || "Login failed");
-    } finally {
-      setLoading(false);
+    
+    dispatch(clearError());
+    const result = await dispatch(loginUser(form));
+    if (result.type === 'auth/login/fulfilled') {
+      navigate("/todos");
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-3 sm:p-4">
       <div className="w-full max-w-md">
@@ -86,7 +81,7 @@ export default function Login() {
                 className={`w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-200 text-sm sm:text-base ${
                   errors.email ? "border-red-500/50" : ""
                 }`}
-                disabled={loading}
+                disabled={isLoading}
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-200">{errors.email}</p>
@@ -104,7 +99,7 @@ export default function Login() {
                   className={`w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 pr-12 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all duration-200 text-sm sm:text-base ${
                     errors.password ? "border-red-500/50" : ""
                   }`}
-                  disabled={loading}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
@@ -121,10 +116,10 @@ export default function Login() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={isLoading}
               className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
             >
-              {loading ? (
+              {isLoading ? (
                 <div className="animate-spin text-xl sm:text-2xl">✨</div>
               ) : (
                 <>
@@ -133,15 +128,9 @@ export default function Login() {
               )}
             </button>
 
-            {msg && (
-              <div
-                className={`p-3 rounded-xl text-center font-medium ${
-                  msg.includes("failed") || msg.includes("error")
-                    ? "bg-red-500/20 text-red-200 border border-red-500/30"
-                    : "bg-green-500/20 text-green-200 border border-green-500/30"
-                }`}
-              >
-                {msg}
+            {error && (
+              <div className="p-3 rounded-xl text-center font-medium bg-red-500/20 text-red-200 border border-red-500/30">
+                {error}
               </div>
             )}
           </form>
