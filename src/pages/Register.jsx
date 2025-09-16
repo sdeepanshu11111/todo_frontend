@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 
 export default function Register() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
@@ -31,7 +32,9 @@ export default function Register() {
       <div className="w-full max-w-md">
         <div className="glass rounded-2xl p-6 sm:p-8 fade-in pulse-glow">
           <div className="text-center mb-6 sm:mb-8">
-            <div className="text-4xl sm:text-5xl lg:text-6xl mb-3 sm:mb-4 floating">🚀</div>
+            <div className="text-4xl sm:text-5xl lg:text-6xl mb-3 sm:mb-4 floating">
+              🚀
+            </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
               Join FancyTodo
             </h2>
@@ -81,7 +84,9 @@ export default function Register() {
               {loading ? (
                 <div className="animate-spin text-xl sm:text-2xl">⭐</div>
               ) : (
-                <>🎉 <span className="ml-2">Create Account</span></>
+                <>
+                  🎉 <span className="ml-2">Create Account</span>
+                </>
               )}
             </button>
           </form>
@@ -97,6 +102,7 @@ export default function Register() {
               {msg}
             </div>
           )}
+          <GoogleLoginButton />
 
           <div className="mt-4 sm:mt-6 text-center">
             <p className="text-white/80 text-sm sm:text-base">

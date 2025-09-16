@@ -63,11 +63,15 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="glass rounded-2xl p-6 sm:p-8 fade-in pulse-glow">
           <div className="text-center mb-6 sm:mb-8">
-            <div className="text-4xl sm:text-5xl lg:text-6xl mb-3 sm:mb-4 floating">🔐</div>
+            <div className="text-4xl sm:text-5xl lg:text-6xl mb-3 sm:mb-4 floating">
+              🔐
+            </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
               Welcome Back!
             </h2>
-            <p className="text-white/80 text-sm sm:text-base">Sign in to your fancy todo account</p>
+            <p className="text-white/80 text-sm sm:text-base">
+              Sign in to your fancy todo account
+            </p>
           </div>
 
           <form onSubmit={submit} className="space-y-4 sm:space-y-6">
@@ -122,7 +126,9 @@ export default function Login() {
               {loading ? (
                 <div className="animate-spin text-xl sm:text-2xl">✨</div>
               ) : (
-                <>🚀 <span className="ml-2">Sign In</span></>
+                <>
+                  🚀 <span className="ml-2">Sign In</span>
+                </>
               )}
             </button>
 
