@@ -11,11 +11,7 @@ export default function Register() {
   const dispatch = useDispatch();
   const { isLoading, isAuthenticated } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/todos");
-    }
-  }, [isAuthenticated, navigate]);
+
 
   const handle = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 

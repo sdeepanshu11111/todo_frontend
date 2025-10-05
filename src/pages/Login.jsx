@@ -14,11 +14,7 @@ export default function Login() {
   const dispatch = useDispatch();
   const { isLoading, error, isAuthenticated } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/todos");
-    }
-  }, [isAuthenticated, navigate]);
+
 
   const validateForm = () => {
     const newErrors = {};

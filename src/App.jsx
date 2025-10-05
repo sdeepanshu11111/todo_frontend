@@ -6,6 +6,7 @@ import Todos from "./pages/Todos";
 import Nav from "./components/Nav";
 import Users from "./pages/Users";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 
 export default function App() {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -15,8 +16,16 @@ export default function App() {
       {isAuthenticated && <Nav />}
       <Routes>
         <Route path="/" element={<Navigate to={isAuthenticated ? "/todos" : "/login"} replace />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        } />
+        <Route path="/login" element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } />
         <Route path="/todos" element={
           <ProtectedRoute>
             <Todos />
