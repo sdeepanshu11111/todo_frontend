@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react";
 import { loginUser, clearError } from "../store/authSlice";
 import DOMPurify from "dompurify";
+import socket from "../socket";
 import GoogleLoginButton from "../components/GoogleLoginButton";
 
 export default function Login() {
@@ -46,10 +47,10 @@ export default function Login() {
   const submit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    
+
     dispatch(clearError());
     const result = await dispatch(loginUser(form));
-    if (result.type === 'auth/login/fulfilled') {
+    if (result.type === "auth/login/fulfilled") {
       navigate("/todos");
     }
   };
