@@ -48,6 +48,13 @@ export default function Nav() {
             {user ? (
               <>
                 <Link
+                  to="/users"
+                  className="text-white/90 hover:text-white transition-all duration-200 font-medium hover:scale-105 px-3 py-2 rounded-lg hover:bg-white/10"
+                >
+                  <span className="hidden lg:inline">Users</span>
+                </Link>
+
+                <Link
                   to="/todos"
                   className="text-white/90 hover:text-white transition-all duration-200 font-medium hover:scale-105 px-3 py-2 rounded-lg hover:bg-white/10"
                 >

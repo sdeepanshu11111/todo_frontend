@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react";
 import { loginUser, clearError } from "../store/authSlice";
 import DOMPurify from "dompurify";
-import socket from "../socket";
 import GoogleLoginButton from "../components/GoogleLoginButton";
 
 export default function Login() {
@@ -13,7 +12,13 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isLoading, error } = useSelector((state) => state.auth);
+  const { isLoading, error, isAuthenticated } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/todos");
+    }
+  }, [isAuthenticated, navigate]);
 
   const validateForm = () => {
     const newErrors = {};

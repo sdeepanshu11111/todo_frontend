@@ -1,44 +1,29 @@
-import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import api from '../api/axios';
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
+import { getCurrentUser } from "../store/authSlice";
 
 export default function ProtectedRoute({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const { user, isAuthenticated, isLoading } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setIsAuthenticated(false);
-          setLoading(false);
-          return;
-        }
+    if (!user) {
+      dispatch(getCurrentUser());
+    }
+  }, [dispatch, user]);
 
-        // Verify token with backend
-        await api.get('/auth/verify');
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error('Auth verification failed:', error);
-        localStorage.removeItem('token');
-        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        setIsAuthenticated(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
       </div>
     );
   }
 
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
 }

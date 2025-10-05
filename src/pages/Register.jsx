@@ -1,29 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api from "../api/axios";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../store/authSlice";
 import GoogleLoginButton from "../components/GoogleLoginButton";
 
 export default function Register() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [msg, setMsg] = useState("");
-  const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isLoading, isAuthenticated } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/todos");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handle = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const submit = async (e) => {
     e.preventDefault();
     setMsg("");
-    setLoading(true);
-    try {
-      await api.post("/auth/register", form);
+    const result = await dispatch(registerUser(form));
+    if (result.type === 'auth/register/fulfilled') {
       setMsg("✅ Registered successfully! Redirecting to dashboard...");
       setTimeout(() => navigate("/todos"), 1000);
-    } catch (err) {
-      setMsg(err.response?.data?.message || "❌ Registration failed");
-    } finally {
-      setLoading(false);
+    } else {
+      setMsg("❌ Registration failed");
     }
   };
 
@@ -78,10 +82,10 @@ export default function Register() {
             </div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={isLoading}
               className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
             >
-              {loading ? (
+              {isLoading ? (
                 <div className="animate-spin text-xl sm:text-2xl">⭐</div>
               ) : (
                 <>

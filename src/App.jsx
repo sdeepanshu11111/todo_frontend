@@ -1,28 +1,32 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Register from "./pages/Register";
 import Login from "./pages/Login.jsx";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Todos from "./pages/Todos";
 import Nav from "./components/Nav";
 import Users from "./pages/Users";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
-  // if (!isAuthenticated) {
-  //   return <Login />;
-  // }
-
-  console.log("pppppp", user, isAuthenticated);
   return (
     <div className="min-h-screen">
-      <Nav />
+      {isAuthenticated && <Nav />}
       <Routes>
-        <Route path="/" element={<Navigate to="/todos" replace />} />
+        <Route path="/" element={<Navigate to={isAuthenticated ? "/todos" : "/login"} replace />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/todos" element={<Todos />} />
-        <Route path="/users" element={<Users />} />
+        <Route path="/todos" element={
+          <ProtectedRoute>
+            <Todos />
+          </ProtectedRoute>
+        } />
+        <Route path="/users" element={
+          <ProtectedRoute>
+            <Users />
+          </ProtectedRoute>
+        } />
       </Routes>
     </div>
   );
