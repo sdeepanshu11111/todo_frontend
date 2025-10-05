@@ -159,6 +159,13 @@ export default function Nav() {
                     <p className="text-xs text-white/70">{user.email}</p>
                   </div>
                 </div>
+                <Link
+                  to="/users"
+                  onClick={() => setIsOpen(false)}
+                  className="block text-white/90 hover:text-white transition-all duration-200 font-medium px-4 py-3 rounded-lg hover:bg-white/10"
+                >
+                  Users
+                </Link>
 
                 <Link
                   to="/todos"
