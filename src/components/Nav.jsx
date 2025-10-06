@@ -2,7 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getCurrentUser, logoutUser } from "../store/authSlice";
-import socket from "../socket";
 
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,12 +20,6 @@ export default function Nav() {
     navigate("/login");
     setIsOpen(false);
   };
-
-  useEffect(() => {
-    if (user?.id) {
-      socket.emit("join", user.id);
-    }
-  }, [user]);
 
   return (
     <nav className="glass backdrop-blur-md border-b border-white/20 py-3 sm:py-4 sticky top-0 z-50">
