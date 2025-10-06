@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { X } from "lucide-react";
 
-export default function ChatBox({ socket, currentUser, selectedUser, onClose }) {
-  const [messages, setMessages] = useState([]);
+export default function ChatBox({ socket, currentUser, selectedUser, messages, onMessageSent, onClose }) {
   const [text, setText] = useState("");
   const messagesEndRef = useRef(null);
 
@@ -14,36 +13,9 @@ export default function ChatBox({ socket, currentUser, selectedUser, onClose }) 
     scrollToBottom();
   }, [messages]);
 
-  useEffect(() => {
-    if (!socket) return;
 
-    const handleReceiveMessage = (msg) => {
-      console.log("ChatBox received message:", msg);
-      console.log("Current user ID:", currentUser.id);
-      console.log("Selected user ID:", selectedUser._id);
-      
-      // Check if this message is part of the current conversation
-      const isFromSelectedUser = msg.senderId === selectedUser._id && msg.receiverId === currentUser.id;
-      const isToSelectedUser = msg.senderId === currentUser.id && msg.receiverId === selectedUser._id;
-      
-      if (isFromSelectedUser || isToSelectedUser) {
-        console.log("Adding message to chat");
-        setMessages((prev) => [...prev, msg]);
-      }
-    };
 
-    socket.on("receiveMessage", handleReceiveMessage);
 
-    return () => {
-      socket.off("receiveMessage", handleReceiveMessage);
-    };
-  }, [socket, selectedUser._id, currentUser.id]);
-
-  // Clear messages when switching users
-  useEffect(() => {
-    console.log("Clearing messages for new user:", selectedUser._id);
-    setMessages([]);
-  }, [selectedUser._id]);
 
   const sendMessage = () => {
     if (text.trim() === "" || !socket) return;
@@ -58,8 +30,8 @@ export default function ChatBox({ socket, currentUser, selectedUser, onClose }) 
     console.log("Sending message:", msg);
     socket.emit("sendMessage", msg);
 
-    // Add message to local state immediately (optimistic update)
-    setMessages((prev) => [...prev, msg]);
+    // Add message via callback (optimistic update)
+    onMessageSent(msg);
     setText("");
   };
 

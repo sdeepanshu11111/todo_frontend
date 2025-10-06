@@ -12,6 +12,7 @@ export default function UsersList() {
   const [socket, setSocket] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [newMessages, setNewMessages] = useState(new Map());
+  const [allMessages, setAllMessages] = useState(new Map());
 
   console.log(user, "user");
 
@@ -43,15 +44,21 @@ export default function UsersList() {
       setOnlineUsers(online);
     });
 
-    // Listen for incoming messages for notifications only
+    // Listen for incoming messages
     newSocket.on("receiveMessage", (msg) => {
       console.log("Users component - New message received:", msg);
-      console.log("Current selected user:", selectedUser?._id);
-      console.log("Message sender:", msg.senderId);
+      
+      // Store message
+      const chatKey = msg.receiverId === user.id ? msg.senderId : msg.receiverId;
+      setAllMessages(prev => {
+        const updated = new Map(prev);
+        const messages = updated.get(chatKey) || [];
+        updated.set(chatKey, [...messages, msg]);
+        return updated;
+      });
       
       // Only show notification if message is TO current user and chat is not open with sender
       if (msg.receiverId === user.id && (!selectedUser || selectedUser._id !== msg.senderId)) {
-        console.log("Adding notification for user:", msg.senderId);
         setNewMessages(prev => {
           const updated = new Map(prev);
           updated.set(msg.senderId, (updated.get(msg.senderId) || 0) + 1);
@@ -135,6 +142,16 @@ export default function UsersList() {
               socket={socket}
               currentUser={user}
               selectedUser={selectedUser}
+              messages={allMessages.get(selectedUser._id) || []}
+              onMessageSent={(msg) => {
+                const chatKey = selectedUser._id;
+                setAllMessages(prev => {
+                  const updated = new Map(prev);
+                  const messages = updated.get(chatKey) || [];
+                  updated.set(chatKey, [...messages, msg]);
+                  return updated;
+                });
+              }}
               onClose={() => setSelectedUser(null)}
             />
           </motion.div>
